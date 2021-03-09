@@ -9,7 +9,7 @@ import java.util.List;
 
 //TODO: hamming weight
 
-interface SudokuUtil {
+public interface SudokuUtil {
     static void printPuzzle(int[][] puzzle) {
         for (int row = 0; row < 9; row++) {
             System.out.print("{ ");
@@ -199,10 +199,30 @@ interface SudokuUtil {
     }
 
     //TODO: test
-    static boolean isPuzzleValid(int[][] puzzle) {
+    static boolean isPuzzleValid(int[][] puzzle, boolean checkStructure) {
+        if (checkStructure && !isStructuralValid(puzzle)) return false;
+
         return areRowsValid(puzzle)
                 && areColumnsValid(puzzle)
                 && areSectorsValid(puzzle);
+    }
+
+    static boolean isStructuralValid(int[][] puzzle) {
+        if (puzzle == null) return false;
+
+        if (puzzle.length != 9) return false;
+
+        for (int rowIndex = 0; rowIndex < 9; rowIndex++) {
+            int[] row = puzzle[rowIndex];
+            if (row.length != 9) return false;
+
+            for (int columnIndex = 0; columnIndex < 9; columnIndex++) {
+                int value = row[columnIndex];
+                if (value < 0 || value > 9) return false;
+            }
+        }
+
+        return true;
     }
 
     //TODO: test

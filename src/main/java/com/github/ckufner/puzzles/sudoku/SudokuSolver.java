@@ -1,6 +1,7 @@
 package com.github.ckufner.puzzles.sudoku;
 
 import com.github.ckufner.IntTuple;
+import com.github.ckufner.puzzles.sudoku.strategies.SudokuStrategiesUtil;
 import com.github.ckufner.util.ArrayUtil;
 
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.List;
 
 public class SudokuSolver {
     public static SudokuSolver of(int[][] unsolvedPuzzle) {
+        if (!SudokuUtil.isPuzzleValid(unsolvedPuzzle, true)) throw new IllegalArgumentException("puzzle is not valid!");
+
         return new SudokuSolver(unsolvedPuzzle);
     }
 
@@ -32,15 +35,19 @@ public class SudokuSolver {
         return ArrayUtil.copy2dArray(this.unsolvedPuzzle);
     }
 
+    public int getBacktracks() {
+        return this.backtracks;
+    }
+
     public List<int[][]> solve(boolean singleResult) {
         this.solutions.clear();
         this.singleResult = singleResult;
 
-        SudokuStrategyUtil.applyPuzzleSolvingStrategies(this.puzzle);
+        //TODO: check if only zeros
+
+        SudokuStrategiesUtil.applyStrategies(this.puzzle);
 
         this.solvePuzzle();
-
-        System.out.println("backtracks: " + this.backtracks);
 
         return this.solutions;
     }
@@ -62,11 +69,11 @@ public class SudokuSolver {
 
         for (int candidateSolution : candidateSolutions) {
             this.puzzle[cellRow][cellColumn] = candidateSolution;
-            if (SudokuUtil.isPuzzleValid(this.puzzle)) {
+            if (SudokuUtil.isPuzzleValid(this.puzzle, false)) {
                 int[][] puzzleStateBeforeImplications = ArrayUtil.copy2dArray(this.puzzle);
-                SudokuStrategyUtil.applyPuzzleSolvingStrategies(this.puzzle);
+                SudokuStrategiesUtil.applyStrategies(this.puzzle);
 
-                if (SudokuUtil.isPuzzleValid(this.puzzle)) {
+                if (SudokuUtil.isPuzzleValid(this.puzzle, false)) {
                     this.solvePuzzle();
                 }
 

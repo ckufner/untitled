@@ -17,21 +17,24 @@ class SudokuSolverTest {
     @ParameterizedTest
     @ArgumentsSource(value = SolveTestArgumentsProvider.class)
     void solveTest(int[][] unsolved, int[][] expected) {
-        List<int[][]> solvedPuzzles = SudokuSolver.of(unsolved).solve(true);
+        SudokuSolver sudokuSolver = SudokuSolver.of(unsolved);
+        List<int[][]> solvedPuzzles = sudokuSolver.solve(true);
 
         assertNotNull(solvedPuzzles);
         assertTrue(solvedPuzzles.size() > 0);
         assertEquals(1, solvedPuzzles.size());
 
         int[][] solvedPuzzle = solvedPuzzles.get(0);
+
+        System.out.println("backtracks: " + sudokuSolver.getBacktracks());
         SudokuUtil.printPuzzle(solvedPuzzle);
 
         assertEquals(9, solvedPuzzle.length);
         for (int row = 0; row < 9; row++) {
             assertArrayEquals(expected[row], solvedPuzzle[row]);
         }
-        assertTrue(SudokuUtil.isPuzzleValid(solvedPuzzle));
 
+        assertTrue(SudokuUtil.isPuzzleValid(solvedPuzzle, true));
     }
 
     private static class SolveTestArgumentsProvider implements ArgumentsProvider {
